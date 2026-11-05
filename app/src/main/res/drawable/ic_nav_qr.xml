@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="54dp"
+    android:height="54dp"
+    android:viewportWidth="54"
+    android:viewportHeight="54">
+
+    <!-- Circle Blue Container -->
+    <path
+        android:fillColor="#0A84D6"
+        android:pathData="M27,0C12.09,0 0,12.09 0,27C0,41.91 12.09,54 27,54C41.91,54 54,41.91 54,27C54,12.09 41.91,0 27,0Z"/>
+
+    <!-- QR Code white icon inside -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M14,14H22V22H14V14ZM16,16V20H20V16H16Z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32,14H40V22H32V14ZM34,16V20H38V16H34Z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M14,32H22V40H14V32ZM16,34V38H20V34H16Z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M26,14H30V18H26V14ZM26,22H30V26H26V22ZM14,26H18V30H14V26ZM26,30H30V34H26V30ZM32,32H36V36H32V32ZM36,26H40V30H36V26ZM36,36H40V40H36V36ZM26,36H30V40H26V36Z"/>
+
+</vector>
