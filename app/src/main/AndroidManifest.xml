@@ -24,17 +24,17 @@
         </activity>
 
         <activity
-            android:name=".ForgotPasswordActivity"
+            android:name=".ManHinhQuenMatKhau"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".StudentHomeActivity"
+            android:name=".ManHinhTrangChuSinhVien"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".LecturerHomeActivity"
+            android:name=".ManHinhTrangChuGiaoVien"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 

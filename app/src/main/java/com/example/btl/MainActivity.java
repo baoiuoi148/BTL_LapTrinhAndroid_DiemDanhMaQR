@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_dangnhap);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_login), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -50,18 +50,18 @@ public class MainActivity extends AppCompatActivity {
             String userLower = username.toLowerCase();
             if (userLower.contains("gv") || userLower.contains("giangvien")) {
                 Toast.makeText(MainActivity.this, "Đăng nhập tài khoản Giảng viên thành công!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, LecturerHomeActivity.class);
+                Intent intent = new Intent(MainActivity.this, ManHinhTrangChuGiaoVien.class);
                 startActivity(intent);
             } else {
                 Toast.makeText(MainActivity.this, "Đăng nhập tài khoản Sinh viên thành công!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, StudentHomeActivity.class);
+                Intent intent = new Intent(MainActivity.this, ManHinhTrangChuSinhVien.class);
                 startActivity(intent);
             }
         });
 
         // Chuyển sang màn hình Quên mật khẩu
         tvForgotPassword.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ForgotPasswordActivity.class);
+            Intent intent = new Intent(MainActivity.this, ManHinhQuenMatKhau.class);
             startActivity(intent);
         });
     }
