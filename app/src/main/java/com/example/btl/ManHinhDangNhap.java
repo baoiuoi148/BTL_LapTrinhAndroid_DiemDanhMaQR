@@ -13,7 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class MainActivity extends AppCompatActivity {
+public class ManHinhDangNhap extends AppCompatActivity {
 
     private EditText etUsername;
     private EditText etPassword;
@@ -42,26 +42,26 @@ public class MainActivity extends AppCompatActivity {
             String password = etPassword.getText().toString().trim();
 
             if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManHinhDangNhap.this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             // Phân quyền tài khoản
             String userLower = username.toLowerCase();
-            if (userLower.contains("gv") || userLower.contains("giangvien")) {
-                Toast.makeText(MainActivity.this, "Đăng nhập tài khoản Giảng viên thành công!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, ManHinhTrangChuGiaoVien.class);
+            if (userLower.contains("GV") || userLower.contains("giangvien")) {
+                Toast.makeText(ManHinhDangNhap.this, "Đăng nhập tài khoản Giảng viên thành công!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ManHinhDangNhap.this, ManHinhTrangChuGiaoVien.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(MainActivity.this, "Đăng nhập tài khoản Sinh viên thành công!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, ManHinhTrangChuSinhVien.class);
+                Toast.makeText(ManHinhDangNhap.this, "Đăng nhập tài khoản Sinh viên thành công!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ManHinhDangNhap.this, ManHinhTrangChuSinhVien.class);
                 startActivity(intent);
             }
         });
 
         // Chuyển sang màn hình Quên mật khẩu
         tvForgotPassword.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ManHinhQuenMatKhau.class);
+            Intent intent = new Intent(ManHinhDangNhap.this, ManHinhQuenMatKhau.class);
             startActivity(intent);
         });
     }

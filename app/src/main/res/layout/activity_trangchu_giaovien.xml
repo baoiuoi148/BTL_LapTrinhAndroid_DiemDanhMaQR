@@ -202,12 +202,14 @@
                     android:padding="6dp">
 
                     <FrameLayout
+                        android:id="@+id/frameLayoutDiemDanhLop"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:background="@drawable/bg_feature_box"
                         android:padding="10dp">
 
                         <ImageView
+                            android:id="@+id/imageViewDiemDanhLop"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:contentDescription="Điểm danh lớp"
