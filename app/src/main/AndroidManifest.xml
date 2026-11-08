@@ -11,9 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BTL">
-
         <activity
-            android:name=".MainActivity"
+            android:name=".ManHinhDangNhap"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -22,22 +21,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".ForgotPasswordActivity"
+            android:name=".ManHinhQuenMatKhau"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
-            android:name=".StudentHomeActivity"
+            android:name=".ManHinhTrangChuSinhVien"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
-            android:name=".LecturerHomeActivity"
+            android:name=".ManHinhTrangChuGiaoVien"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-
+        <activity
+            android:name=".ManHinhLichGiangDay"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ManHinhDanhSachLop"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ManHinhHienMaQR"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

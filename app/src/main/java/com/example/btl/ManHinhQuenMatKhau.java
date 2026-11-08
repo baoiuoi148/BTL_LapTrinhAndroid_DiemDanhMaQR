@@ -12,7 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class ForgotPasswordActivity extends AppCompatActivity {
+public class ManHinhQuenMatKhau extends AppCompatActivity {
 
     private EditText etEmail;
 
@@ -20,7 +20,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_forgot_password);
+        setContentView(R.layout.activity_quenmk);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_forgot_password), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -37,9 +37,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         btnSendCode.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             if (email.isEmpty()) {
-                Toast.makeText(ForgotPasswordActivity.this, "Vui lòng nhập email khoa cấp!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManHinhQuenMatKhau.this, "Vui lòng nhập email khoa cấp!", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(ForgotPasswordActivity.this, "Mã đặt lại mật khẩu đã gửi tới: " + email, Toast.LENGTH_LONG).show();
+                Toast.makeText(ManHinhQuenMatKhau.this, "Mã đặt lại mật khẩu đã gửi tới: " + email, Toast.LENGTH_LONG).show();
             }
         });
 

@@ -13,7 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class MainActivity extends AppCompatActivity {
+public class ManHinhDangNhap extends AppCompatActivity {
 
     private EditText etUsername;
     private EditText etPassword;
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_dangnhap);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_login), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -42,26 +42,26 @@ public class MainActivity extends AppCompatActivity {
             String password = etPassword.getText().toString().trim();
 
             if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManHinhDangNhap.this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             // Phân quyền tài khoản
             String userLower = username.toLowerCase();
-            if (userLower.contains("gv") || userLower.contains("giangvien")) {
-                Toast.makeText(MainActivity.this, "Đăng nhập tài khoản Giảng viên thành công!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, LecturerHomeActivity.class);
+            if (userLower.contains("GV") || userLower.contains("giangvien")) {
+                Toast.makeText(ManHinhDangNhap.this, "Đăng nhập tài khoản Giảng viên thành công!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ManHinhDangNhap.this, ManHinhTrangChuGiaoVien.class);
                 startActivity(intent);
             } else {
-                Toast.makeText(MainActivity.this, "Đăng nhập tài khoản Sinh viên thành công!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(MainActivity.this, StudentHomeActivity.class);
+                Toast.makeText(ManHinhDangNhap.this, "Đăng nhập tài khoản Sinh viên thành công!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ManHinhDangNhap.this, ManHinhTrangChuSinhVien.class);
                 startActivity(intent);
             }
         });
 
         // Chuyển sang màn hình Quên mật khẩu
         tvForgotPassword.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ForgotPasswordActivity.class);
+            Intent intent = new Intent(ManHinhDangNhap.this, ManHinhQuenMatKhau.class);
             startActivity(intent);
         });
     }

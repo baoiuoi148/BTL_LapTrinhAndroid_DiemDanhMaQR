@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_lecturer_home"
+    android:id="@+id/main_student_home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F9FAFB"
     android:orientation="vertical"
-    tools:context=".LecturerHomeActivity">
+    tools:context=".ManHinhTrangChuSinhVien">
 
     <!-- Header Bar -->
     <LinearLayout
@@ -81,7 +81,7 @@
             android:paddingTop="16dp"
             android:paddingBottom="24dp">
 
-            <!-- Lecturer Profile Card -->
+            <!-- Student Profile Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -104,21 +104,21 @@
                         android:textSize="13sp" />
 
                     <TextView
-                        android:id="@+id/tvLecturerName"
+                        android:id="@+id/tvStudentName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="TS. Nguyễn Văn A"
+                        android:text="Trần Hồng Ngọc"
                         android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tvLecturerId"
+                        android:id="@+id/tvStudentId"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="GV202401"
+                        android:text="24A1001D0308 - 2410A01"
                         android:textColor="#BAE6FD"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -179,7 +179,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="Lịch dạy"
+                            android:contentDescription="TKB"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_feat_tkb" />
                     </FrameLayout>
@@ -188,7 +188,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Lịch dạy"
+                        android:text="TKB"
                         android:textColor="@color/text_primary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -210,7 +210,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="Điểm danh lớp"
+                            android:contentDescription="Điểm danh"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_feat_diemdanh" />
                     </FrameLayout>
@@ -219,7 +219,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Điểm danh lớp"
+                        android:text="Lịch sử điểm danh"
+                        android:textAlignment="center"
                         android:textColor="@color/text_primary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -272,7 +273,7 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="Lịch coi thi"
+                            android:contentDescription="Lịch thi"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_feat_lichthi" />
                     </FrameLayout>
@@ -281,7 +282,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Lịch coi thi"
+                        android:text="Lịch thi"
                         android:textColor="@color/text_primary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -304,16 +305,16 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="Nộp giáo án"
+                            android:contentDescription="Minh chứng"
                             android:scaleType="fitCenter"
-                            android:src="@drawable/ic_feat_nopga" />
+                            android:src="@drawable/ic_feat_minhchung" />
                     </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Nộp giáo án"
+                        android:text="Minh chứng"
                         android:textColor="@color/text_primary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -335,16 +336,16 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="Nhập điểm"
+                            android:contentDescription="Điểm số"
                             android:scaleType="fitCenter"
-                            android:src="@drawable/ic_feat_nhapdiem" />
+                            android:src="@drawable/ic_feat_diemso" />
                     </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Nhập điểm"
+                        android:text="Điểm số"
                         android:textColor="@color/text_primary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -366,16 +367,16 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="Thẻ giảng viên"
+                            android:contentDescription="Thẻ sinh viên"
                             android:scaleType="fitCenter"
-                            android:src="@drawable/ic_feat_thegv" />
+                            android:src="@drawable/ic_feat_thesv" />
                     </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Thẻ giảng viên"
+                        android:text="Thẻ sinh viên"
                         android:textColor="@color/text_primary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -474,7 +475,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Sáng - Phòng 41 - GV: TS. Nguyễn Văn A"
+                        android:text="Sáng - Phòng 41 - GV: Mai Thị Thúy Hà"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -510,7 +511,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Lập trình thiết bị di động"
+                        android:text="Toán Rời Rạc"
                         android:textColor="@color/text_primary"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -519,7 +520,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Chiều - Phòng 51 - GV: TS. Nguyễn Văn A"
+                        android:text="Chiều - Phòng 51 - GV: Nguyễn Thùy Linh"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -616,7 +617,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        android:text="Đã chốt phân công giảng"
+                        android:text="Đã chốt điều chỉnh tín chỉ"
                         android:textColor="@color/text_primary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -627,7 +628,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:lineSpacingExtra="2dp"
-                    android:text="Đã chốt phân công giảng dạy HKI 2026-2027\nvui lòng kiểm tra lịch dạy chính thức trong mục Lịch giảng."
+                    android:text="Đã chốt điều chỉnh tín chỉ HKI 2026-2027\nvui lòng xem lịch học chính thức trong mục Đăng ký tín chỉ."
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
