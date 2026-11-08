@@ -1,4 +1,6 @@
 package com.example.btl;
 
-public class ManHinhLichSuDiemDanh {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class ManHinhLichSuDiemDanh extends AppCompatActivity {
 }
