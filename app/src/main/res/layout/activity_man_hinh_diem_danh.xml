@@ -5,6 +5,238 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clipChildren="false"
     tools:context=".ManHinhDiemDanh">
+
+    <!-- Header xanh: logo + FitHou + 3 icon -->
+    <include
+        android:id="@+id/constraintLayoutHeader"
+        layout="@layout/layout_header"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Thanh tiêu đề trắng: "Quét mã QR điểm danh" + đèn flash + lịch sử -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutTieuDe"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayoutHeader">
+
+        <TextView
+            android:id="@+id/textViewTieuDe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="Quét mã QR điểm danh"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageViewLichSu"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="18dp"
+            android:clickable="true"
+            android:contentDescription="Lịch sử điểm danh"
+            android:focusable="true"
+            android:src="@drawable/ic_history"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageViewFlash"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="30dp"
+            android:clickable="true"
+            android:contentDescription="Bật đèn flash"
+            android:focusable="true"
+            android:src="@drawable/ic_flash"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imageViewLichSu"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Vùng camera nền đen: đặt PreviewView / BarcodeView vào trong FrameLayout này -->
+    <FrameLayout
+        android:id="@+id/frameLayoutCamera"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toTopOf="@id/constraintLayoutBottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayoutTieuDe" />
+
+    <!-- Khung quét vuông viền trắng, nằm giữa màn hình như Figma (≈204 x 204dp) -->
+    <View
+        android:id="@+id/viewKhungQuet"
+        android:layout_width="204dp"
+        android:layout_height="204dp"
+        android:background="@drawable/bg_scan_frame"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Popup kết quả điểm danh (iPhone 17 - 3): ẩn sẵn, quét xong mới hiện, đè lên vùng camera.
+         Dùng cho cả thành công lẫn thất bại: code đổi ảnh (ic_success_big / ic_that_bai_big),
+         tiêu đề và nội dung; khi thất bại có thể ẩn textViewGiangVien + linearLayoutThoiGian.
+         Cách hiện/ẩn: constraintLayoutKetQua.setVisibility(View.VISIBLE / View.GONE).
+         tools:visibility="visible" chỉ để xem trước trong Design, không ảnh hưởng khi chạy.
+         6 phần bên trong nằm trong một chuỗi dọc spread_inside nên tự giãn theo chiều cao màn hình. -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutKetQua"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/bg_khung_thanh_cong"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/constraintLayoutBottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayoutTieuDe"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/imageViewKetQua"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="47dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_success_big"
+            app:layout_constraintBottom_toTopOf="@id/textViewKetQua"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread_inside" />
+
+        <TextView
+            android:id="@+id/textViewKetQua"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:text="Điểm danh thành công !"
+            android:textColor="@color/black"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/textViewMonHoc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageViewKetQua" />
+
+        <TextView
+            android:id="@+id/textViewMonHoc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="44dp"
+            android:layout_marginEnd="20dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/textViewGiangVien"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewKetQua"
+            tools:text="Môn học: Chủ nghĩa xã hội" />
+
+        <TextView
+            android:id="@+id/textViewGiangVien"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="44dp"
+            android:layout_marginEnd="20dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/linearLayoutThoiGian"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewMonHoc"
+            tools:text="Giảng viên: TS. Nguyễn Thị Luận" />
+
+        <!-- Nhóm "Điểm danh thành công lúc:" + giờ lớn, là một phần tử trong chuỗi -->
+        <LinearLayout
+            android:id="@+id/linearLayoutThoiGian"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@id/buttonVeTrangChu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewGiangVien">
+
+            <TextView
+                android:id="@+id/textViewLucDiemDanh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="43dp"
+                android:text="Điểm danh thành công lúc:"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/textViewGioDiemDanh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="18dp"
+                android:gravity="center"
+                android:textColor="@color/success_blue"
+                android:textSize="52sp"
+                android:textStyle="bold"
+                tools:text="07:40:25" />
+        </LinearLayout>
+
+        <!-- Nút "Về trang chủ": icon nhà cách mép trái 22dp, chữ bắt đầu cách mép trái ~89dp.
+             Cần minSdk >= 23 cho drawableTint. -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonVeTrangChu"
+            android:layout_width="0dp"
+            android:layout_height="65dp"
+            android:layout_marginStart="76dp"
+            android:layout_marginEnd="75dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_button_thanh_cong"
+            android:drawablePadding="40dp"
+            android:drawableStart="@drawable/ic_nav_home"
+            android:drawableTint="@color/home_icon_dark"
+            android:gravity="center_vertical|start"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:paddingStart="22dp"
+            android:paddingEnd="12dp"
+            android:stateListAnimator="@null"
+            android:text="Về trang chủ"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/linearLayoutThoiGian" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Thanh điều hướng dưới (nút QR nhô lên nên đặt cuối để vẽ đè lên camera) -->
+    <include
+        android:id="@+id/constraintLayoutBottomNav"
+        layout="@layout/layout_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

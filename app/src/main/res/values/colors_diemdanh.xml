@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Màu bổ sung cho nhóm màn hình điểm danh.
+     Dán nội dung vào colors.xml hiện có, hoặc giữ nguyên file riêng này. -->
+<resources>
+    <color name="card_border">#E5E7EB</color>
+
+    <color name="success_green">#16A34A</color>
+    <color name="danger_red">#DC2626</color>
+
+    <!-- Tag "Có mặt" / "Vắng mặt": đo từ Figma màn Chi tiết điểm danh -->
+    <color name="tag_present_bg">#8EFFCA</color>
+    <color name="tag_present_text">#15803D</color>
+    <color name="tag_absent_bg">#FEE2E2</color>
+    <color name="tag_absent_text">#B91C1C</color>
+
+    <!-- Chữ khung giờ "1-4", "5-8" trong thẻ lớp học (nền dùng bg_class_tag) -->
+    <color name="tag_time_text">#34D399</color>
+
+    <!-- Màn Điểm danh thành công: giờ điểm danh + nền nút "Về trang chủ", và icon nhà trong nút -->
+    <color name="success_blue">#53A5C6</color>
+    <color name="home_icon_dark">#06468C</color>
+
+    <color name="scan_background">#FF000000</color>
+    <color name="icon_dark">#374151</color>
+</resources>

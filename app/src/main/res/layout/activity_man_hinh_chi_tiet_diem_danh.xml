@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Màn "Chi tiết điểm danh" (iPhone 17 - 4): mở khi bấm một lớp ở màn Lịch sử điểm danh.
+     Header, khối thông tin lớp, khung thống kê, tiêu đề "Danh sách buổi học" và thanh điều hướng
+     đều cố định; chỉ danh sách buổi học (RecyclerView) cuộn, và bị cắt ngay dưới tiêu đề
+     nên không đè lên các phần phía trên. Mỗi buổi dùng item_buoi_hoc. -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clipChildren="false"
+    tools:context=".ManHinhChiTietDiemDanh">
+
+    <!-- Header xanh: logo + FitHou + 3 icon -->
+    <include
+        android:id="@+id/constraintLayoutHeader"
+        layout="@layout/layout_header"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- Khối xanh: quay lại + "Chi tiết điểm danh" + tên môn + học kỳ -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutThongTinLop"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="14dp"
+        android:background="@drawable/bg_header_card"
+        android:minHeight="79dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayoutHeader">
+
+        <ImageView
+            android:id="@+id/imageViewQuayLai"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:contentDescription="Quay lại"
+            android:focusable="true"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewChiTietDiemDanh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="Chi tiết điểm danh"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewQuayLai"
+            app:layout_constraintStart_toEndOf="@id/imageViewQuayLai"
+            app:layout_constraintTop_toTopOf="@id/imageViewQuayLai" />
+
+        <TextView
+            android:id="@+id/textViewTenMonHoc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="14dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageViewQuayLai"
+            tools:text="Lập trình cho thiết bị di động" />
+
+        <TextView
+            android:id="@+id/textViewHocKy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewTenMonHoc"
+            tools:text="HK1 · 2026–2027" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/textViewMaLop"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/text_hint"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayoutThongTinLop"
+        tools:text="Mã lớp: K24-7E1019.22-1.2627-11_LT" />
+
+    <TextView
+        android:id="@+id/textViewGiangVien"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewMaLop"
+        tools:text="GV: Mai Thị Thúy Hà" />
+
+    <!-- Khung thống kê điểm danh: vòng tròn tiến độ bên trái, số buổi có mặt/vắng bên phải -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayoutThongKe"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="34dp"
+        android:background="@drawable/bg_the_vien_xam"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewGiangVien">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineThongKe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.55813956" />
+
+        <TextView
+            android:id="@+id/textViewThongKe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="6dp"
+            android:text="Thống kê điểm danh"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewSoBuoiDaHoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="18dp"
+            android:textColor="@color/text_hint"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewThongKe"
+            tools:text="Đã diễn ra 6 buổi học" />
+
+        <!-- Vòng tròn tiến độ: max=100, progress = % tham gia (set trong code) -->
+        <ProgressBar
+            android:id="@+id/progressBarThamGia"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="94dp"
+            android:layout_height="94dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="28dp"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="50"
+            android:progressDrawable="@drawable/bg_progress_ring"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewSoBuoiDaHoc" />
+
+        <TextView
+            android:id="@+id/textViewPhanTram"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/textViewThamGia"
+            app:layout_constraintEnd_toEndOf="@id/progressBarThamGia"
+            app:layout_constraintStart_toStartOf="@id/progressBarThamGia"
+            app:layout_constraintTop_toTopOf="@id/progressBarThamGia"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="50%" />
+
+        <TextView
+            android:id="@+id/textViewThamGia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tham gia"
+            android:textColor="@color/black"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/progressBarThamGia"
+            app:layout_constraintEnd_toEndOf="@id/progressBarThamGia"
+            app:layout_constraintStart_toStartOf="@id/progressBarThamGia"
+            app:layout_constraintTop_toBottomOf="@id/textViewPhanTram" />
+
+        <!-- Dòng "Có mặt: N buổi" -->
+        <ImageView
+            android:id="@+id/imageViewCoMat"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="83dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_check_circle"
+            app:layout_constraintStart_toStartOf="@id/guidelineThongKe"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewCoMat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="Có mặt:"
+            android:textColor="@color/text_hint"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewCoMat"
+            app:layout_constraintStart_toEndOf="@id/imageViewCoMat"
+            app:layout_constraintTop_toTopOf="@id/imageViewCoMat" />
+
+        <TextView
+            android:id="@+id/textViewSoBuoiCoMat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewCoMat"
+            app:layout_constraintStart_toEndOf="@id/textViewCoMat"
+            app:layout_constraintTop_toTopOf="@id/imageViewCoMat"
+            tools:text="3 buổi" />
+
+        <!-- Dòng "Vắng: N buổi" -->
+        <ImageView
+            android:id="@+id/imageViewVang"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginTop="5dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_cancel_circle"
+            app:layout_constraintStart_toStartOf="@id/guidelineThongKe"
+            app:layout_constraintTop_toBottomOf="@id/imageViewCoMat" />
+
+        <TextView
+            android:id="@+id/textViewVang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="Vắng:"
+            android:textColor="@color/text_hint"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewVang"
+            app:layout_constraintStart_toEndOf="@id/imageViewVang"
+            app:layout_constraintTop_toTopOf="@id/imageViewVang" />
+
+        <TextView
+            android:id="@+id/textViewSoBuoiVang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewVang"
+            app:layout_constraintStart_toEndOf="@id/textViewVang"
+            app:layout_constraintTop_toTopOf="@id/imageViewVang"
+            tools:text="3 buổi" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/textViewDanhSachBuoiHoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:text="Danh sách buổi học"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayoutThongKe" />
+
+    <!-- Danh sách buổi học: phần duy nhất cuộn. Cao từ tiêu đề đến thanh điều hướng;
+         RecyclerView mặc định cắt nội dung theo khung của nó nên khi kéo lên các thẻ biến mất
+         ngay dưới tiêu đề, không đè lên khung thống kê. paddingBottom chừa chỗ cho nút QR nhô lên. -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewBuoiHoc"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="39dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="34dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingBottom="28dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/constraintLayoutBottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewDanhSachBuoiHoc"
+        tools:itemCount="6"
+        tools:listitem="@layout/item_buoi_hoc" />
+
+
+    <!-- Thanh điều hướng dưới (nút QR nhô lên nên đặt cuối để vẽ đè lên nội dung) -->
+    <include
+        android:id="@+id/constraintLayoutBottomNav"
+        layout="@layout/layout_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

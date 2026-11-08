@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayoutLopHoc"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginEnd="4dp"
+    android:layout_marginBottom="24dp"
+    android:background="@drawable/bg_class_card"
+    android:elevation="3dp"
+    android:minHeight="80dp">
+
+    <TextView
+        android:id="@+id/textViewKhungGio"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_class_tag"
+        android:gravity="center"
+        android:textColor="@color/tag_time_text"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1-4" />
+
+    <TextView
+        android:id="@+id/textViewMaLop"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        android:textColor="@color/text_primary"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/textViewKhungGio"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Mã lớp: K24-7E1019.22-I.2627-1.1_LT- Lập trình cho thiết bị di động" />
+
+    <TextView
+        android:id="@+id/textViewGiangVien"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:textColor="@color/text_primary"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/textViewMaLop"
+        app:layout_constraintTop_toBottomOf="@id/textViewMaLop"
+        tools:text="GV: Mai Thị Thúy Hà" />
+
+    <TextView
+        android:id="@+id/textViewLichHoc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
+        android:textColor="@color/text_hint"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/textViewMaLop"
+        app:layout_constraintTop_toBottomOf="@id/textViewGiangVien"
+        tools:text="Thứ 2 Tiết 1-4 Phòng 24" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

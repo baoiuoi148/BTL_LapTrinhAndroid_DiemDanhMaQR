@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayoutBuoiHoc"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp"
+    android:background="@drawable/bg_the_vien_xam">
+
+    <TextView
+        android:id="@+id/textViewTenBuoi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="7dp"
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Buổi 1" />
+
+    <ImageView
+        android:id="@+id/imageViewLich"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="16dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_calendar_small"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewTenBuoi" />
+
+    <TextView
+        android:id="@+id/textViewNgay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:textColor="@color/text_hint"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewLich"
+        app:layout_constraintStart_toEndOf="@id/imageViewLich"
+        app:layout_constraintTop_toTopOf="@id/imageViewLich"
+        tools:text="10/09/2026" />
+
+
+    <ImageView
+        android:id="@+id/imageViewDongHo"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_marginStart="99dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_clock"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewLich"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/imageViewLich" />
+
+    <TextView
+        android:id="@+id/textViewGio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:textColor="@color/text_hint"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewDongHo"
+        app:layout_constraintStart_toEndOf="@id/imageViewDongHo"
+        app:layout_constraintTop_toTopOf="@id/imageViewDongHo"
+        tools:text="07:30" />
+
+    <TextView
+        android:id="@+id/textViewTrangThai"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/bg_tag_present"
+        android:paddingStart="9dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="9dp"
+        android:paddingBottom="2dp"
+        android:textColor="@color/tag_present_text"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Có mặt" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
