@@ -1,12 +1,15 @@
 package com.example.btl;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -25,8 +28,10 @@ import java.util.List;
 
 public class ManHinhDiemDanh extends AppCompatActivity {
     private DecoratedBarcodeView mbarcodeScannerViewQuetMa;
+    private ImageView mimageViewTaiKhoan;
     private static final int CAMERA_PERMISSION_CODE = 100;
     private boolean daQuet = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +53,7 @@ public class ManHinhDiemDanh extends AppCompatActivity {
             batDauQuet();
         }
     }
+
     private void batDauQuet() {
         daQuet = false;
         mbarcodeScannerViewQuetMa.decodeSingle(new BarcodeCallback() {
@@ -63,6 +69,7 @@ public class ManHinhDiemDanh extends AppCompatActivity {
             public void possibleResultPoints(List<ResultPoint> resultPoints) {}
         });
     }
+
     private void xuLyDiemDanh(String duLieuQR) {
         try {
             JSONObject json = new JSONObject(duLieuQR);
@@ -86,6 +93,7 @@ public class ManHinhDiemDanh extends AppCompatActivity {
             finish();
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -99,10 +107,37 @@ public class ManHinhDiemDanh extends AppCompatActivity {
             }
         }
     }
-    private void initView() {
-        mbarcodeScannerViewQuetMa=findViewById(R.id.barcodeScannerViewQuetMa);
-        mbarcodeScannerViewQuetMa.getStatusView().setText("Đặt mã QR vào giữa khung để quét");
+
+    private void xacNhanDangXuat() {
+        new AlertDialog.Builder(this)
+                .setTitle("Đăng xuất")
+                .setMessage("Bạn có muốn đăng xuất không?")
+                .setPositiveButton("Đăng xuất", (dialog, which) -> {
+                    Intent intent = new Intent(ManHinhDiemDanh.this, ManHinhDangNhap.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
     }
+
+    private void initView() {
+        mbarcodeScannerViewQuetMa = findViewById(R.id.barcodeScannerViewQuetMa);
+        if (mbarcodeScannerViewQuetMa != null && mbarcodeScannerViewQuetMa.getStatusView() != null) {
+            mbarcodeScannerViewQuetMa.getStatusView().setText("Đặt mã QR vào giữa khung để quét");
+        }
+
+        mimageViewTaiKhoan = findViewById(R.id.imageViewTaiKhoan);
+        if (mimageViewTaiKhoan == null) {
+            mimageViewTaiKhoan = findViewById(R.id.imageViewUserHeader);
+        }
+
+        if (mimageViewTaiKhoan != null) {
+            mimageViewTaiKhoan.setOnClickListener(v -> xacNhanDangXuat());
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -110,9 +145,12 @@ public class ManHinhDiemDanh extends AppCompatActivity {
             mbarcodeScannerViewQuetMa.resume();
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();
-        mbarcodeScannerViewQuetMa.pause();
+        if (mbarcodeScannerViewQuetMa != null) {
+            mbarcodeScannerViewQuetMa.pause();
+        }
     }
 }

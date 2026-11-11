@@ -1,18 +1,20 @@
 package com.example.btl;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import android.graphics.Bitmap;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
@@ -21,9 +23,10 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
-public class ManHinhHienMaQR extends AppCompatActivity {
+public class ManHinhHienMaQR extends AppCompatActivity implements View.OnClickListener {
     private TextView mtextViewThoiGian, mtextViewMaLop;
     private ImageView mimageViewQR;
+    private ImageView mimageViewUserHeader;
     private CountDownTimer countDownTimer;
     private final String MA_LOP = "K24-7E1019.22-I.2627-1.1_LT";
     private final String NGAY_DIEM_DANH = "09/11/2026";
@@ -41,6 +44,13 @@ public class ManHinhHienMaQR extends AppCompatActivity {
         initView();
         initQR();
         initThoiGian();
+        addAction();
+    }
+
+    private void addAction() {
+        if (mimageViewUserHeader != null) {
+            mimageViewUserHeader.setOnClickListener(this);
+        }
     }
 
     private void initThoiGian() {
@@ -83,10 +93,33 @@ public class ManHinhHienMaQR extends AppCompatActivity {
     }
 
     private void initView() {
-        mtextViewThoiGian=findViewById(R.id.textViewThoiGian);
-        mtextViewMaLop=findViewById(R.id.textViewMaLop);
-        mimageViewQR=findViewById(R.id.imageViewQR);
+        mtextViewThoiGian = findViewById(R.id.textViewThoiGian);
+        mtextViewMaLop = findViewById(R.id.textViewMaLop);
+        mimageViewQR = findViewById(R.id.imageViewQR);
+        mimageViewUserHeader = findViewById(R.id.imageViewUserHeader);
     }
+
+    private void xacNhanDangXuat() {
+        new AlertDialog.Builder(this)
+                .setTitle("Đăng xuất")
+                .setMessage("Bạn có muốn đăng xuất không?")
+                .setPositiveButton("Đăng xuất", (dialog, which) -> {
+                    Intent intent = new Intent(ManHinhHienMaQR.this, ManHinhDangNhap.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == mimageViewUserHeader) {
+            xacNhanDangXuat();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
