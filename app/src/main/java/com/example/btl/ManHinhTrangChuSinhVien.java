@@ -1,10 +1,7 @@
 package com.example.btl;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,8 +9,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class ManHinhTrangChuSinhVien extends AppCompatActivity implements View.OnClickListener {
-    private ImageView mimageViewQuetQR;
+public class ManHinhTrangChuSinhVien extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,24 +21,9 @@ public class ManHinhTrangChuSinhVien extends AppCompatActivity implements View.O
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        initView();
-        addAction();
-    }
 
-    private void addAction() {
-        mimageViewQuetQR.setOnClickListener(this);
-    }
-
-    private void initView() {
-        mimageViewQuetQR=findViewById(R.id.imageViewQuetQR);
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        if(v==mimageViewQuetQR){
-            Intent intent=new Intent(ManHinhTrangChuSinhVien.this, ManHinhDiemDanh.class);
-            startActivity(intent);
-        }
+        ThanhDieuHuong.gan(this);
+        findViewById(R.id.linearLayoutMoLichSu).setOnClickListener(view ->
+                startActivity(new Intent(this, ManHinhLichSuDiemDanh.class)));
     }
 }
