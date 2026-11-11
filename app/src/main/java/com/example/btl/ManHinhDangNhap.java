@@ -46,9 +46,9 @@ public class ManHinhDangNhap extends AppCompatActivity {
                 return;
             }
 
-            // Phân quyền tài khoản
+            // Phân quyền tài khoản (không phân biệt chữ hoa/thường)
             String userLower = username.toLowerCase();
-            if (userLower.contains("GV") || userLower.contains("giangvien")) {
+            if (userLower.contains("gv") || userLower.contains("giangvien") || userLower.contains("giaovien")) {
                 Toast.makeText(ManHinhDangNhap.this, "Đăng nhập tài khoản Giảng viên thành công!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ManHinhDangNhap.this, ManHinhTrangChuGiaoVien.class);
                 startActivity(intent);
