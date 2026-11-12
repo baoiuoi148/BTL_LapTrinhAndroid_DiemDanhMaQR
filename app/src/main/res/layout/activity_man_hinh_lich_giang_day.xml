@@ -62,9 +62,12 @@
             android:src="@drawable/ic_moon" />
 
         <ImageView
+            android:id="@+id/imageViewTaiKhoan"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:contentDescription="Profile"
+            android:clickable="true"
+            android:contentDescription="Tài khoản"
+            android:focusable="true"
             android:src="@drawable/ic_user_header" />
     </LinearLayout>
 

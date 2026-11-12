@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class ManHinhDanhSachLop extends AppCompatActivity implements View.OnClickListener {
     private ImageView mimageViewHienMaQR;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +26,7 @@ public class ManHinhDanhSachLop extends AppCompatActivity implements View.OnClic
         });
         initView();
         addAction();
+        XacNhanDangXuat.attach(this);
     }
 
     private void addAction() {
@@ -32,13 +34,13 @@ public class ManHinhDanhSachLop extends AppCompatActivity implements View.OnClic
     }
 
     private void initView() {
-        mimageViewHienMaQR=findViewById(R.id.imageViewHienMaQR);
+        mimageViewHienMaQR = findViewById(R.id.imageViewHienMaQR);
     }
 
     @Override
     public void onClick(View v) {
-        if(v==mimageViewHienMaQR){
-            Intent intent=new Intent(ManHinhDanhSachLop.this, ManHinhHienMaQR.class);
+        if (v == mimageViewHienMaQR) {
+            Intent intent = new Intent(ManHinhDanhSachLop.this, ManHinhHienMaQR.class);
             startActivity(intent);
         }
     }
