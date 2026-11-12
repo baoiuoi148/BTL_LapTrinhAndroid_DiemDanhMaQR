@@ -23,6 +23,7 @@ public class ManHinhTrangChuSinhVien extends AppCompatActivity {
         });
 
         ThanhDieuHuong.gan(this);
+        XacNhanDangXuat.attach(this);
         findViewById(R.id.linearLayoutMoLichSu).setOnClickListener(view ->
                 startActivity(new Intent(this, ManHinhLichSuDiemDanh.class)));
     }

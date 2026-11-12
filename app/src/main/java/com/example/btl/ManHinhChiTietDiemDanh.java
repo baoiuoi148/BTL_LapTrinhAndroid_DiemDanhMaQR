@@ -34,6 +34,8 @@ public class ManHinhChiTietDiemDanh extends AppCompatActivity {
         });
 
         ThanhDieuHuong.gan(this);
+        XacNhanDangXuat.attach(this);
+
         findViewById(R.id.imageViewQuayLai).setOnClickListener(view -> finish());
         datChu(R.id.textViewTenMonHoc, lop.ten);
         datChu(R.id.textViewHocKy, DuLieuDiemDanh.HOC_KY);

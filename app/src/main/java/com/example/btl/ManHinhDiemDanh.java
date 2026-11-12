@@ -78,6 +78,8 @@ public class ManHinhDiemDanh extends AppCompatActivity {
         });
 
         ThanhDieuHuong.gan(this, this::quetLai);
+        XacNhanDangXuat.attach(this);
+
         findViewById(R.id.buttonVeTrangChuKetQua).setOnClickListener(view ->
                 ThanhDieuHuong.veTrangChu(this));
         findViewById(R.id.imageViewLichSu).setOnClickListener(view ->

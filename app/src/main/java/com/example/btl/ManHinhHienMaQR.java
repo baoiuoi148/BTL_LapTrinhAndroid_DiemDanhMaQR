@@ -1,18 +1,17 @@
 package com.example.btl;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import android.graphics.Bitmap;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
@@ -41,6 +40,7 @@ public class ManHinhHienMaQR extends AppCompatActivity {
         initView();
         initQR();
         initThoiGian();
+        XacNhanDangXuat.attach(this);
     }
 
     private void initThoiGian() {

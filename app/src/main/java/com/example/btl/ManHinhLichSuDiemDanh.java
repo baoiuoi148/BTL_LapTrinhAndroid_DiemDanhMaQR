@@ -25,6 +25,8 @@ public class ManHinhLichSuDiemDanh extends AppCompatActivity {
         });
 
         ThanhDieuHuong.gan(this);
+        XacNhanDangXuat.attach(this);
+
         findViewById(R.id.imageViewDongLichSu).setOnClickListener(view -> finish());
         TextView hocKy = findViewById(R.id.textViewHocKy);
         hocKy.setText(DuLieuDiemDanh.HOC_KY);

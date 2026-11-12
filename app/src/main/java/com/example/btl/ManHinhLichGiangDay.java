@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class ManHinhLichGiangDay extends AppCompatActivity implements View.OnClickListener {
     private LinearLayout mlinearLayoutTrangChu, mlinearLayoutLopGiangDay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +26,7 @@ public class ManHinhLichGiangDay extends AppCompatActivity implements View.OnCli
         });
         initView();
         addAction();
+        XacNhanDangXuat.attach(this);
     }
 
     private void addAction() {
@@ -33,18 +35,18 @@ public class ManHinhLichGiangDay extends AppCompatActivity implements View.OnCli
     }
 
     private void initView() {
-        mlinearLayoutTrangChu=findViewById(R.id.linearLayoutTrangChu);
-        mlinearLayoutLopGiangDay=findViewById(R.id.linearLayoutLopGiangDay);
+        mlinearLayoutTrangChu = findViewById(R.id.linearLayoutTrangChu);
+        mlinearLayoutLopGiangDay = findViewById(R.id.linearLayoutLopGiangDay);
     }
 
     @Override
     public void onClick(View v) {
-        if(v==mlinearLayoutTrangChu){
-            Intent intent=new Intent(ManHinhLichGiangDay.this, ManHinhTrangChuGiaoVien.class);
+        if (v == mlinearLayoutTrangChu) {
+            Intent intent = new Intent(ManHinhLichGiangDay.this, ManHinhTrangChuGiaoVien.class);
             finish();
         }
-        if(v==mlinearLayoutLopGiangDay){
-            Intent intent=new Intent(ManHinhLichGiangDay.this, ManHinhDanhSachLop.class);
+        if (v == mlinearLayoutLopGiangDay) {
+            Intent intent = new Intent(ManHinhLichGiangDay.this, ManHinhDanhSachLop.class);
             startActivity(intent);
         }
     }
