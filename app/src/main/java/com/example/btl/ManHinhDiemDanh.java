@@ -2,6 +2,7 @@ package com.example.btl;
 
 import android.Manifest;
 import android.content.Intent;
+import android.database.sqlite.SQLiteException;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -83,7 +84,7 @@ public class ManHinhDiemDanh extends AppCompatActivity {
         findViewById(R.id.buttonVeTrangChuKetQua).setOnClickListener(view ->
                 ThanhDieuHuong.veTrangChu(this));
         findViewById(R.id.imageViewLichSu).setOnClickListener(view ->
-                startActivity(new Intent(this, ManHinhLichSuDiemDanh.class)));
+                startActivity(ThanhDieuHuong.chuyenMan(this, ManHinhLichSuDiemDanh.class)));
 
         Bundle ketQuaDaLuu = savedInstanceState == null ? null : savedInstanceState.getBundle("ketQua");
         if (ketQuaDaLuu != null) {
@@ -177,7 +178,7 @@ public class ManHinhDiemDanh extends AppCompatActivity {
     }
 
     private void xuLyDiemDanh(String duLieuQr) {
-        try {
+        try (DatabaseHelper db = new DatabaseHelper(this)) {
             JSONObject qr = new JSONObject(duLieuQr);
             String maLop = qr.getString("maLop");
             String ngay = qr.getString("ngay");
@@ -191,7 +192,8 @@ public class ManHinhDiemDanh extends AppCompatActivity {
             }
             dinhDangNgay.parse(ngay);
 
-            DuLieuDiemDanh.LopHoc lop = DuLieuDiemDanh.timLop(maLop);
+            String maSV = ThanhDieuHuong.maNguoiDung(this);
+            DuLieuDiemDanh.LopHoc lop = DuLieuDiemDanh.timLop(db, maSV, maLop);
             if (lop == null) {
                 hienLoi("Mã QR không thuộc lớp bạn đang học.");
                 return;
@@ -206,11 +208,18 @@ public class ManHinhDiemDanh extends AppCompatActivity {
                 return;
             }
 
-            long gioDiemDanh = DuLieuDiemDanh.ghiNhan(this, lop, ngay, bayGio);
+            if (!db.ghiNhanDiemDanh(maSV, lop.ma, ngay, bayGio)) {
+                hienLoi("Không thể lưu kết quả điểm danh.");
+                return;
+            }
+            long gioDiemDanh = db.layGioDaDiemDanh(maSV, lop.ma, ngay, bayGio);
             Bundle thanhCong = new Bundle();
-            thanhCong.putString("maLop", lop.ma);
+            thanhCong.putString("tenMon", lop.ten);
+            thanhCong.putString("giangVien", lop.giangVien);
             thanhCong.putLong("gioDiemDanh", gioDiemDanh);
             hienKetQua(thanhCong);
+        } catch (SQLiteException e) {
+            hienLoi("Không thể lưu kết quả điểm danh.");
         } catch (JSONException | ParseException e) {
             hienLoi("Mã QR điểm danh không hợp lệ.");
         }
@@ -227,8 +236,7 @@ public class ManHinhDiemDanh extends AppCompatActivity {
         ketQua = ketQuaMoi;
         mayQuet.setVisibility(View.INVISIBLE);
 
-        DuLieuDiemDanh.LopHoc lop = DuLieuDiemDanh.timLop(ketQua.getString("maLop"));
-        boolean thanhCong = lop != null;
+        boolean thanhCong = ketQua.containsKey("tenMon");
         ImageView icon = findViewById(R.id.imageViewKetQuaDiemDanh);
         icon.setImageResource(thanhCong ? R.drawable.ic_success_big : R.drawable.ic_that_bai_big);
 
@@ -242,8 +250,8 @@ public class ManHinhDiemDanh extends AppCompatActivity {
         gio.setVisibility(hienThiChiTiet);
         findViewById(R.id.textViewNhanGioDiemDanh).setVisibility(hienThiChiTiet);
         if (thanhCong) {
-            thongBao.setText("Môn học: " + lop.ten);
-            giangVien.setText("Giảng viên: " + lop.giangVien);
+            thongBao.setText("Môn học: " + ketQua.getString("tenMon"));
+            giangVien.setText("Giảng viên: " + ketQua.getString("giangVien"));
             gio.setText(DuLieuDiemDanh.dinhDangGio(ketQua.getLong("gioDiemDanh"), "HH:mm:ss"));
         } else {
             thongBao.setText(ketQua.getString("lyDo"));

@@ -1,32 +1,37 @@
 package com.example.btl;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.database.Cursor;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 final class DuLieuDiemDanh {
-    static final String HOC_KY = "HK1 - 2026-2027";
     static final String EXTRA_MA_LOP = "maLop";
-    static final List<LopHoc> DANH_SACH_LOP = Arrays.asList(
-            new LopHoc("K24-7E1019.22-I.2627-1.1_LT", "Lập trình cho thiết bị di động",
-                    "Mai Thị Thúy Hà", "1-4", "Thứ 2 · Tiết 1-4 · Phòng 24", "07:30"),
-            new LopHoc("K24-7E1005.22-I.2627-4.4_LT", "Toán rời rạc",
-                    "Nguyễn Thùy Linh", "5-8", "Thứ 2 · Tiết 5-8 · Phòng 44", "13:00"),
-            new LopHoc("K24-7E1021.22-I.2627-2.2_LT", "Quản trị mạng",
-                    "Vũ Xuân Hạnh", "1-4", "Thứ 3 · Tiết 1-4 · Phòng 33-34", "07:30"),
-            new LopHoc("K24-7E1018.22-I.2627-5.5_LT", "Lập trình Web",
-                    "Thái Thanh Tùng", "5-8", "Thứ 6 · Tiết 5-8 · Phòng 41", "13:00"));
+    // SQLite hiện chỉ có giờ bắt đầu theo lớp.
+    private static final long THOI_GIAN_DIEM_DANH_MS = 15 * 60_000L;
 
     private DuLieuDiemDanh() {}
 
-    static LopHoc timLop(String maLop) {
-        for (LopHoc lop : DANH_SACH_LOP) {
+    static List<LopHoc> layLop(DatabaseHelper db, String maSV) {
+        List<LopHoc> lopHoc = new ArrayList<>();
+        if (maSV == null) {
+            return lopHoc;
+        }
+        try (Cursor c = db.layLichHocSinhVien(maSV)) {
+            while (c.moveToNext()) {
+                lopHoc.add(new LopHoc(c));
+            }
+        }
+        return lopHoc;
+    }
+
+    static LopHoc timLop(DatabaseHelper db, String maSV, String maLop) {
+        for (LopHoc lop : layLop(db, maSV)) {
             if (lop.ma.equals(maLop)) {
                 return lop;
             }
@@ -34,74 +39,100 @@ final class DuLieuDiemDanh {
         return null;
     }
 
-    static long ghiNhan(Context context, LopHoc lop, String ngay, long thoiGian) {
-        SharedPreferences boNho = boNho(context, lop);
-        long gioDaGhiNhan = boNho.getLong(ngay, 0);
-        if (gioDaGhiNhan != 0) {
-            return gioDaGhiNhan;
-        }
-        boNho.edit().putLong(ngay, thoiGian).apply();
-        return thoiGian;
-    }
-
-    static List<BuoiHoc> layBuoiHoc(Context context, LopHoc lop) {
+    static List<BuoiHoc> layBuoiHoc(DatabaseHelper db, String maSV, LopHoc lop) {
         List<BuoiHoc> buoiHoc = new ArrayList<>();
-        SharedPreferences boNho = boNho(context, lop);
-        String[] ngayMau = {"10/09/2026", "17/09/2026", "24/09/2026",
-                "01/10/2026", "08/10/2026", "15/10/2026"};
-        boolean[] coMatMau = {true, false, true, true, false, false};
-        for (int i = 0; i < ngayMau.length; i++) {
-            String ngay = ngayMau[i];
-            buoiHoc.add(new BuoiHoc(ngay, lop.gioHoc, coMatMau[i] || boNho.contains(ngay)));
-        }
-        for (String ngay : boNho.getAll().keySet()) {
-            if (!Arrays.asList(ngayMau).contains(ngay)) {
-                buoiHoc.add(new BuoiHoc(ngay, dinhDangGio(boNho.getLong(ngay, 0), "HH:mm"), true));
+        try (Cursor c = db.layChiTietDiemDanhCuaSV(lop.ma, maSV)) {
+            while (c.moveToNext()) {
+                buoiHoc.add(new BuoiHoc(c, lop.gioHoc));
             }
         }
-        buoiHoc.sort((a, b) -> khoaNgay(a.ngay).compareTo(khoaNgay(b.ngay)));
+        buoiHoc.sort(Comparator.comparingLong(buoi -> buoi.batDau));
         return buoiHoc;
-    }
-
-    private static String khoaNgay(String ngay) {
-        return ngay.substring(6) + ngay.substring(3, 5) + ngay.substring(0, 2);
     }
 
     static String dinhDangGio(long thoiGian, String mau) {
         return new SimpleDateFormat(mau, Locale.getDefault()).format(new Date(thoiGian));
     }
 
-    private static SharedPreferences boNho(Context context, LopHoc lop) {
-        return context.getSharedPreferences("diem_danh_" + lop.ma, Context.MODE_PRIVATE);
+    private static String docChu(Cursor c, String cot) {
+        String giaTri = c.getString(c.getColumnIndexOrThrow(cot));
+        return giaTri == null ? "" : giaTri;
     }
 
     static final class LopHoc {
         final String ma;
         final String ten;
         final String giangVien;
+        final String hocKy;
         final String tiet;
         final String lich;
         final String gioHoc;
 
-        LopHoc(String ma, String ten, String giangVien, String tiet, String lich, String gioHoc) {
-            this.ma = ma;
-            this.ten = ten;
-            this.giangVien = giangVien;
-            this.tiet = tiet;
-            this.lich = lich;
-            this.gioHoc = gioHoc;
+        LopHoc(Cursor c) {
+            ma = docChu(c, "ma_lop");
+            ten = docChu(c, "ten_mon");
+            giangVien = docChu(c, "ten_giang_vien");
+            hocKy = docChu(c, "hoc_ky");
+            tiet = docChu(c, "tiet_hoc");
+            lich = android.text.TextUtils.join(" · ", java.util.Arrays.asList(
+                    docChu(c, "thu_hoc"), "Tiết " + tiet, docChu(c, "phong_hoc")));
+            gioHoc = docChu(c, "gio_bat_dau");
+        }
+    }
+
+    enum TrangThai {
+        CO_MAT("Có mặt"),
+        VANG("Vắng mặt"),
+        CHUA_DEN("Chưa đến buổi học"),
+        CHUA_DIEM_DANH("Chưa điểm danh");
+
+        final String nhan;
+
+        TrangThai(String nhan) {
+            this.nhan = nhan;
         }
     }
 
     static final class BuoiHoc {
+        final int soThuTu;
         final String ngay;
         final String gio;
         final boolean coMat;
+        final long batDau;
 
-        BuoiHoc(String ngay, String gio, boolean coMat) {
-            this.ngay = ngay;
+        BuoiHoc(Cursor c, String gio) {
+            soThuTu = c.getInt(c.getColumnIndexOrThrow("so_thu_tu"));
+            ngay = docChu(c, "ngay_hoc");
             this.gio = gio;
-            this.coMat = coMat;
+            coMat = c.getInt(c.getColumnIndexOrThrow("co_mat")) == 1;
+            batDau = docGioBatDau(ngay, gio);
+        }
+
+        boolean daChot(long hienTai) {
+            return batDau != Long.MAX_VALUE && hienTai >= batDau + THOI_GIAN_DIEM_DANH_MS;
+        }
+
+        TrangThai trangThai(long hienTai) {
+            if (coMat) {
+                return TrangThai.CO_MAT;
+            }
+            if (batDau == Long.MAX_VALUE) {
+                return TrangThai.CHUA_DIEM_DANH;
+            }
+            if (hienTai < batDau) {
+                return TrangThai.CHUA_DEN;
+            }
+            return daChot(hienTai) ? TrangThai.VANG : TrangThai.CHUA_DIEM_DANH;
+        }
+
+        private static long docGioBatDau(String ngay, String gio) {
+            SimpleDateFormat dinhDang = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ROOT);
+            dinhDang.setLenient(false);
+            try {
+                return dinhDang.parse(ngay + " " + gio).getTime();
+            } catch (ParseException e) {
+                return Long.MAX_VALUE;
+            }
         }
     }
 }

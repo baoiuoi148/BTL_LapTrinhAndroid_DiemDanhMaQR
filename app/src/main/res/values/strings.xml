@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BTL</string>
+    <string name="canh_bao_ty_le_diem_danh">Cảnh báo: Tỷ lệ có mặt dưới 80%.</string>
 </resources>

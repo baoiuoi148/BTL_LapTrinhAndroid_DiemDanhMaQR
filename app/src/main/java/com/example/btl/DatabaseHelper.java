@@ -6,13 +6,21 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "DiemDanhQR.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 7;
+    private static final String MA_SV_QUAN_TRI_MANG_MAU = "24A1001D0102";
+    private static final String MA_LOP_QUAN_TRI_MANG_MAU = "K24-7E1021.22-I.2627-2.2_LT";
+    private static final String MA_LOP_DI_DONG_MAU = "K24-7E1019.22-I.2627-1.1_LT";
+    private static final String[] NGAY_DI_DONG_CU = {
+            "10/09/2026", "17/09/2026", "24/09/2026", "01/10/2026",
+            "08/10/2026", "15/10/2026", "13/12/2026"
+    };
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -80,49 +88,150 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS DiemDanh");
-        db.execSQL("DROP TABLE IF EXISTS BuoiHoc");
-        db.execSQL("DROP TABLE IF EXISTS SinhVien_LopHoc");
-        db.execSQL("DROP TABLE IF EXISTS LopHoc");
-        db.execSQL("DROP TABLE IF EXISTS TaiKhoan");
-        onCreate(db);
+        if (oldVersion < 3) {
+            themGiangVienMau(db);
+        }
+        if (oldVersion < 4) {
+            themLopHocMau(db);
+        }
+        if (oldVersion < 5) {
+            themBuoiHocMau(db);
+        }
+        if (oldVersion < 6) {
+            String maSinhVien = MA_SV_QUAN_TRI_MANG_MAU;
+            String maLop = MA_LOP_QUAN_TRI_MANG_MAU;
+            themSinhVienMau(db, maSinhVien, "123456", "Hoàng Trung Đức",
+                    "sv0102@fithou.edu.vn", "2410A01", maLop);
+            db.delete("SinhVien_LopHoc", "ma_sv = ? AND ma_lop <> ?",
+                    new String[]{maSinhVien, maLop});
+        }
+        if (oldVersion < 7) {
+            themDiemDanhQuanTriMangMau(db);
+        }
     }
 
     // ================= DỮ LIỆU MẪU BAN ĐẦU =================
     private void khoiTaoDuLieuMau(SQLiteDatabase db) {
         // Tài khoản sinh viên & giảng viên
-        db.execSQL("INSERT INTO TaiKhoan VALUES ('24A1001D0308', '123456', 'Trần Hồng Ngọc', 'sv308@fithou.edu.vn', 'SINH_VIEN', '2410A01')");
         db.execSQL("INSERT INTO TaiKhoan VALUES ('GV202401', '123456', 'Mai Thị Thúy Hà', 'hamtt@fithou.edu.vn', 'GIANG_VIEN', NULL)");
         db.execSQL("INSERT INTO TaiKhoan VALUES ('GV202402', '123456', 'Nguyễn Thùy Linh', 'linhnt@fithou.edu.vn', 'GIANG_VIEN', NULL)");
+        themGiangVienMau(db);
 
         // Lớp học phần
-        db.execSQL("INSERT INTO LopHoc VALUES ('K24-7E1019.22-I.2627-1.1_LT', 'Lập trình cho thiết bị di động', 'HK1 - 2026-2027', 'Thứ 2', '1-4', 'Phòng 24', '07:30', 'GV202401')");
-        db.execSQL("INSERT INTO LopHoc VALUES ('K24-7E1005.22-I.2627-4.4_LT', 'Toán rời rạc', 'HK1 - 2026-2027', 'Thứ 2', '5-8', 'Phòng 44', '13:00', 'GV202402')");
+        themLopHocMau(db);
 
-        // Đăng ký lớp cho sinh viên
-        db.execSQL("INSERT INTO SinhVien_LopHoc (ma_sv, ma_lop) VALUES ('24A1001D0308', 'K24-7E1019.22-I.2627-1.1_LT')");
-        db.execSQL("INSERT INTO SinhVien_LopHoc (ma_sv, ma_lop) VALUES ('24A1001D0308', 'K24-7E1005.22-I.2627-4.4_LT')");
+          // Đăng ký lớp cho sinh viên
+        themSinhVienMau(db, "24A1001D0308", "123456", "Trần Hồng Ngọc",
+                "sv308@fithou.edu.vn", "2410A01", MA_LOP_DI_DONG_MAU,
+                "K24-7E1005.22-I.2627-4.4_LT");
+        themSinhVienMau(db, MA_SV_QUAN_TRI_MANG_MAU, "123456", "Hoàng Trung Đức",
+                "sv0102@fithou.edu.vn", "2410A01", MA_LOP_QUAN_TRI_MANG_MAU);
 
-        // Các buổi học của môn Di động
-        String maLopDiDong = "K24-7E1019.22-I.2627-1.1_LT";
-        String[] ngayMau = {"10/09/2026", "17/09/2026", "24/09/2026", "01/10/2026", "08/10/2026", "15/10/2026"};
-        int[] trangThaiMau = {1, 0, 1, 1, 0, 0}; // 1: có mặt, 0: vắng
+        themBuoiHocMau(db);
+        themDiemDanhQuanTriMangMau(db);
+        db.execSQL("INSERT INTO DiemDanh (buoi_hoc_id, ma_sv, trang_thai, thoi_gian_quet) " +
+                        "SELECT id, ?, 1, ? FROM BuoiHoc WHERE ma_lop = ? AND so_thu_tu BETWEEN 1 AND 6",
+                new Object[]{"24A1001D0308", System.currentTimeMillis(), MA_LOP_DI_DONG_MAU});
+    }
 
-        for (int i = 0; i < ngayMau.length; i++) {
-            ContentValues cvBuoi = new ContentValues();
-            cvBuoi.put("ma_lop", maLopDiDong);
-            cvBuoi.put("ngay_hoc", ngayMau[i]);
-            cvBuoi.put("so_thu_tu", i + 1);
-            long buoiId = db.insert("BuoiHoc", null, cvBuoi);
+    private void themDiemDanhQuanTriMangMau(SQLiteDatabase db) {
+        db.execSQL("INSERT OR IGNORE INTO DiemDanh (buoi_hoc_id, ma_sv, trang_thai) " +
+                        "SELECT b.id, s.ma_sv, 1 FROM BuoiHoc b " +
+                        "JOIN SinhVien_LopHoc s ON s.ma_lop = b.ma_lop " +
+                        "WHERE s.ma_sv = ? AND b.ma_lop = ? " +
+                        "AND b.so_thu_tu BETWEEN 1 AND 12 AND b.so_thu_tu NOT IN (3, 7, 11)",
+                new Object[]{MA_SV_QUAN_TRI_MANG_MAU, MA_LOP_QUAN_TRI_MANG_MAU});
+    }
 
-            // Ghi nhận điểm danh mẫu cho SV 24A1001D0308
-            ContentValues cvDiemDanh = new ContentValues();
-            cvDiemDanh.put("buoi_hoc_id", buoiId);
-            cvDiemDanh.put("ma_sv", "24A1001D0308");
-            cvDiemDanh.put("trang_thai", trangThaiMau[i]);
-            cvDiemDanh.put("thoi_gian_quet", trangThaiMau[i] == 1 ? System.currentTimeMillis() : null);
-            db.insert("DiemDanh", null, cvDiemDanh);
+    private void themSinhVienMau(SQLiteDatabase db, String maSinhVien, String matKhau,
+                                String hoTen, String email, String lopNienChe,
+                                String... maCacLopHoc) {
+        db.execSQL("INSERT OR IGNORE INTO TaiKhoan " +
+                        "(ma_nguoi_dung, mat_khau, ho_ten, email, vai_tro, lop_nien_che) " +
+                        "VALUES (?, ?, ?, ?, 'SINH_VIEN', ?)",
+                new Object[]{maSinhVien, matKhau, hoTen, email, lopNienChe});
+        for (String maLop : maCacLopHoc) {
+            db.execSQL("INSERT INTO SinhVien_LopHoc (ma_sv, ma_lop) " +
+                            "SELECT ?, ? WHERE NOT EXISTS " +
+                            "(SELECT 1 FROM SinhVien_LopHoc WHERE ma_sv = ? AND ma_lop = ?)",
+                    new Object[]{maSinhVien, maLop, maSinhVien, maLop});
         }
+    }
+
+    private void themBuoiHocMau(SQLiteDatabase db) {
+        String[] cacThu = {"Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6"};
+        SimpleDateFormat dinhDangNgay = new SimpleDateFormat("dd/MM/yyyy", Locale.ROOT);
+        try (Cursor lop = db.rawQuery(
+                "SELECT ma_lop, thu_hoc FROM LopHoc WHERE hoc_ky = ?",
+                new String[]{"HK1 - 2026-2027"})) {
+            while (lop.moveToNext()) {
+                String maLop = lop.getString(0);
+                int viTriThu = java.util.Arrays.asList(cacThu).indexOf(lop.getString(1));
+                if (viTriThu < 0) {
+                    continue;
+                }
+
+                Calendar ngayHoc = Calendar.getInstance();
+                ngayHoc.clear();
+                ngayHoc.set(2026, Calendar.AUGUST, 10 + viTriThu);
+
+                for (int buoi = 1; buoi <= 12; buoi++) {
+                    String ngay = dinhDangNgay.format(ngayHoc.getTime());
+                    if (MA_LOP_DI_DONG_MAU.equals(maLop) && buoi <= NGAY_DI_DONG_CU.length) {
+                        // Giữ ID buổi mẫu cũ để các lượt điểm danh vẫn liên kết đúng.
+                        db.execSQL("UPDATE BuoiHoc SET ngay_hoc = ? " +
+                                        "WHERE ma_lop = ? AND so_thu_tu = ? AND ngay_hoc = ? " +
+                                        "AND NOT EXISTS (SELECT 1 FROM BuoiHoc WHERE ma_lop = ? AND ngay_hoc = ?)",
+                                new Object[]{ngay, maLop, buoi, NGAY_DI_DONG_CU[buoi - 1], maLop, ngay});
+                    }
+                    db.execSQL("INSERT INTO BuoiHoc (ma_lop, ngay_hoc, so_thu_tu) " +
+                                    "SELECT ?, ?, ? WHERE NOT EXISTS " +
+                                    "(SELECT 1 FROM BuoiHoc WHERE ma_lop = ? AND ngay_hoc = ?)",
+                            new Object[]{maLop, ngay, buoi, maLop, ngay});
+                    ngayHoc.add(Calendar.DAY_OF_MONTH, 7);
+                }
+            }
+        }
+    }
+
+    private void themGiangVienMau(SQLiteDatabase db) {
+        db.execSQL("INSERT OR IGNORE INTO TaiKhoan " +
+                "(ma_nguoi_dung, mat_khau, ho_ten, email, vai_tro) VALUES " +
+                "('GV202403', '123456', 'Vũ Xuân Hạnh', 'hanhvx@fithou.edu.vn', 'GIANG_VIEN'), " +
+                "('GV202404', '123456', 'Thái Thanh Tùng', 'tungtt@fithou.edu.vn', 'GIANG_VIEN'), " +
+                "('GV202405', '123456', 'Nguyễn Đình Dũng', 'dungnd@fithou.edu.vn', 'GIANG_VIEN'), " +
+                "('GV202406', '123456', 'Lê Thị Hương', 'huonglt@fithou.edu.vn', 'GIANG_VIEN')");
+    }
+
+    private void themLopHocMau(SQLiteDatabase db) {
+        themLopMau(db, MA_LOP_DI_DONG_MAU, "Lập trình cho thiết bị di động",
+                "Thứ 2", "1-4", "Phòng 24", "07:30", "GV202401");
+        themLopMau(db, "K24-7E1019.22-I.2627-2.1_LT", "Lập trình cho thiết bị di động",
+                "Thứ 4", "1-4", "Phòng 24", "07:30", "GV202401");
+        themLopMau(db, "K24-7E1005.22-I.2627-4.4_LT", "Toán rời rạc",
+                "Thứ 2", "5-8", "Phòng 44", "13:00", "GV202402");
+        themLopMau(db, "K24-7E1005.22-I.2627-5.4_LT", "Toán rời rạc",
+                "Thứ 4", "5-8", "Phòng 44", "13:00", "GV202402");
+        themLopMau(db, "K24-7E1021.22-I.2627-2.2_LT", "Quản trị mạng",
+                "Thứ 3", "1-4", "Phòng 51", "07:30", "GV202403");
+        themLopMau(db, "K24-7E1021.22-I.2627-3.2_LT", "Quản trị mạng",
+                "Thứ 5", "1-4", "Phòng 51", "07:30", "GV202403");
+        themLopMau(db, "K24-7E1018.22-I.2627-5.5_LT", "Lập trình Web",
+                "Thứ 3", "5-8", "Phòng 41", "13:00", "GV202405");
+        themLopMau(db, "K24-7E1018.22-I.2627-6.5_LT", "Lập trình Web",
+                "Thứ 5", "5-8", "Phòng 34", "13:00", "GV202404");
+        themLopMau(db, "K24-7A0003.22-I.2627-3.3_LT", "Chủ nghĩa xã hội khoa học",
+                "Thứ 6", "1-4", "Phòng 52", "07:30", "GV202406");
+        themLopMau(db, "K24-7A0003.22-I.2627-4.3_LT", "Chủ nghĩa xã hội khoa học",
+                "Thứ 6", "5-8", "Phòng 52", "13:00", "GV202406");
+    }
+
+    private void themLopMau(SQLiteDatabase db, String maLop, String tenMon, String thu,
+                            String tiet, String phong, String gio, String maGiangVien) {
+        db.execSQL("INSERT OR IGNORE INTO LopHoc " +
+                        "(ma_lop, ten_mon, hoc_ky, thu_hoc, tiet_hoc, phong_hoc, gio_bat_dau, ma_gv) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                new Object[]{maLop, tenMon, "HK1 - 2026-2027", thu, tiet, phong, gio, maGiangVien});
     }
 
     // ================= CÁC HÀM TRUY VẤN CHÍNH =================
@@ -137,12 +246,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // 2. Lấy thời khóa biểu / Lịch học của Sinh viên
     public Cursor layLichHocSinhVien(String maSV) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql = "SELECT l.*, t.ho_ten AS ten_giang_vien " +
+        String sql = "SELECT DISTINCT l.*, t.ho_ten AS ten_giang_vien " +
                 "FROM LopHoc l " +
                 "JOIN SinhVien_LopHoc s ON l.ma_lop = s.ma_lop " +
-                "JOIN TaiKhoan t ON l.ma_gv = t.ma_nguoi_dung " +
+                "LEFT JOIN TaiKhoan t ON l.ma_gv = t.ma_nguoi_dung " +
                 "WHERE s.ma_sv = ?";
         return db.rawQuery(sql, new String[]{maSV});
+    }
+
+    Cursor layHoSoSinhVien(String maSV) {
+        return getReadableDatabase().rawQuery(
+                "SELECT ho_ten, lop_nien_che FROM TaiKhoan WHERE ma_nguoi_dung = ? AND vai_tro = 'SINH_VIEN'",
+                new String[]{maSV});
+    }
+
+    Cursor layLichHocHomNay(String maSV, String ngay) {
+        return getReadableDatabase().rawQuery(
+                "SELECT l.ten_mon, l.tiet_hoc, l.gio_bat_dau, l.phong_hoc, g.ho_ten " +
+                        "FROM LopHoc l LEFT JOIN TaiKhoan g ON g.ma_nguoi_dung = l.ma_gv " +
+                        "WHERE EXISTS (SELECT 1 FROM SinhVien_LopHoc s WHERE s.ma_lop = l.ma_lop AND s.ma_sv = ?) " +
+                        "AND EXISTS (SELECT 1 FROM BuoiHoc b WHERE b.ma_lop = l.ma_lop AND b.ngay_hoc = ?) " +
+                        "ORDER BY l.gio_bat_dau, l.ma_lop",
+                new String[]{maSV, ngay});
     }
 
     // 3. Lấy lịch dạy của Giảng viên
@@ -168,31 +293,53 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // 5. Ghi nhận điểm danh khi quét mã QR thành công
     public boolean ghiNhanDiemDanh(String maSV, String maLop, String ngayHoc, long thoiGianQuet) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            if (!kiemTraSinhVienThuocLop(maSV, maLop)) {
+                return false;
+            }
 
-        // Tìm hoặc tạo BuoiHoc cho ngày hôm đó nếu chưa có
-        long buoiHocId = -1;
-        Cursor cBuoi = db.rawQuery("SELECT id FROM BuoiHoc WHERE ma_lop = ? AND ngay_hoc = ?",
-                new String[]{maLop, ngayHoc});
-        if (cBuoi.moveToFirst()) {
-            buoiHocId = cBuoi.getLong(0);
-        } else {
-            ContentValues cvBuoi = new ContentValues();
-            cvBuoi.put("ma_lop", maLop);
-            cvBuoi.put("ngay_hoc", ngayHoc);
-            buoiHocId = db.insert("BuoiHoc", null, cvBuoi);
+            long buoiHocId;
+            try (Cursor c = db.rawQuery(
+                    "SELECT id FROM BuoiHoc WHERE ma_lop = ? AND ngay_hoc = ? ORDER BY id LIMIT 1",
+                    new String[]{maLop, ngayHoc})) {
+                if (c.moveToFirst()) {
+                    buoiHocId = c.getLong(0);
+                } else {
+                    ContentValues buoi = new ContentValues();
+                    buoi.put("ma_lop", maLop);
+                    buoi.put("ngay_hoc", ngayHoc);
+                    buoiHocId = db.insertOrThrow("BuoiHoc", null, buoi);
+                }
+            }
+
+            ContentValues diemDanh = new ContentValues();
+            diemDanh.put("trang_thai", 1);
+            diemDanh.put("thoi_gian_quet", thoiGianQuet);
+            String[] khoa = {Long.toString(buoiHocId), maSV};
+            int daCapNhat = db.update("DiemDanh", diemDanh,
+                    "buoi_hoc_id = ? AND ma_sv = ? AND (trang_thai IS NULL OR trang_thai <> 1)", khoa);
+            if (daCapNhat == 0) {
+                diemDanh.put("buoi_hoc_id", buoiHocId);
+                diemDanh.put("ma_sv", maSV);
+                db.insertWithOnConflict("DiemDanh", null, diemDanh, SQLiteDatabase.CONFLICT_IGNORE);
+            }
+            db.setTransactionSuccessful();
+            return true;
+        } finally {
+            db.endTransaction();
         }
-        cBuoi.close();
+    }
 
-        // Ghi hoặc cập nhật điểm danh
-        ContentValues cv = new ContentValues();
-        cv.put("buoi_hoc_id", buoiHocId);
-        cv.put("ma_sv", maSV);
-        cv.put("trang_thai", 1); // 1 = Có mặt
-        cv.put("thoi_gian_quet", thoiGianQuet);
-
-        long result = db.insertWithOnConflict("DiemDanh", null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-        return result != -1;
+    long layGioDaDiemDanh(String maSV, String maLop, String ngayHoc, long macDinh) {
+        try (Cursor c = getReadableDatabase().rawQuery(
+                "SELECT d.thoi_gian_quet FROM DiemDanh d JOIN BuoiHoc b ON d.buoi_hoc_id = b.id " +
+                        "WHERE d.ma_sv = ? AND b.ma_lop = ? AND b.ngay_hoc = ? AND d.trang_thai = 1 " +
+                        "AND d.thoi_gian_quet IS NOT NULL ORDER BY d.thoi_gian_quet LIMIT 1",
+                new String[]{maSV, maLop, ngayHoc})) {
+            return c.moveToFirst() ? c.getLong(0) : macDinh;
+        }
     }
 
     // 6. Lấy lịch sử điểm danh của 1 lớp cho Sinh viên (Dùng cho ManHinhChiTietDiemDanh)
