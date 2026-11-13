@@ -108,11 +108,11 @@ public class ManHinhDangNhap extends AppCompatActivity {
 
                 if ("GIANG_VIEN".equalsIgnoreCase(vaiTro) || isGiangVien) {
                     Intent intent = new Intent(ManHinhDangNhap.this, ManHinhTrangChuGiaoVien.class);
-                    intent.putExtra("ma_nguoi_dung", maNguoiDung);
+                    intent.putExtra(ThanhDieuHuong.EXTRA_MA_NGUOI_DUNG, maNguoiDung);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(ManHinhDangNhap.this, ManHinhTrangChuSinhVien.class);
-                    intent.putExtra("ma_nguoi_dung", maNguoiDung);
+                    intent.putExtra(ThanhDieuHuong.EXTRA_MA_NGUOI_DUNG, maNguoiDung);
                     startActivity(intent);
                 }
 
