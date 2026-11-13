@@ -2,8 +2,10 @@ package com.example.btl;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,11 +32,31 @@ public class ManHinhDangNhap extends AppCompatActivity {
             return insets;
         });
 
-        // Ánh xạ View từ layout activity_login.xml
+        // Ánh xạ View từ layout activity_dangnhap.xml
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
         Button btnLogin = findViewById(R.id.btnLogin);
         TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
+        ImageView ivTogglePassword = findViewById(R.id.ivTogglePassword);
+
+        // Xử lý ẩn / hiện mật khẩu bằng icon con mắt matbat.xml & mattat.xml
+        final boolean[] isPasswordVisible = {false};
+        if (ivTogglePassword != null) {
+            ivTogglePassword.setOnClickListener(v -> {
+                if (isPasswordVisible[0]) {
+                    // Ẩn mật khẩu (chỉ thấy chấm/mã số) -> Hiện icon matbat
+                    etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    ivTogglePassword.setImageResource(R.drawable.matbat);
+                    isPasswordVisible[0] = false;
+                } else {
+                    // Hiện mật khẩu -> Hiện icon mattat
+                    etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    ivTogglePassword.setImageResource(R.drawable.mattat);
+                    isPasswordVisible[0] = true;
+                }
+                etPassword.setSelection(etPassword.getText().length());
+            });
+        }
 
         // Nút Đăng nhập
         btnLogin.setOnClickListener(v -> {
