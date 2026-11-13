@@ -1,6 +1,7 @@
 package com.example.btl;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.Button;
@@ -19,12 +20,15 @@ public class ManHinhDangNhap extends AppCompatActivity {
 
     private EditText etUsername;
     private EditText etPassword;
+    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dangnhap);
+
+        dbHelper = new DatabaseHelper(this);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_login), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -63,21 +67,62 @@ public class ManHinhDangNhap extends AppCompatActivity {
             String username = etUsername.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
-            if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(ManHinhDangNhap.this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
+            // Bước 1: Kiểm tra rỗng
+            boolean hasError = false;
+            if (username.isEmpty()) {
+                etUsername.setError("Vui lòng nhập tên đăng nhập");
+                hasError = true;
+            }
+            if (password.isEmpty()) {
+                etPassword.setError("Vui lòng nhập mật khẩu");
+                hasError = true;
+            }
+            if (hasError) {
                 return;
             }
 
-            // Phân quyền tài khoản (không phân biệt chữ hoa/thường)
-            String userLower = username.toLowerCase();
-            if (userLower.contains("gv") || userLower.contains("giangvien") || userLower.contains("giaovien")) {
-                Toast.makeText(ManHinhDangNhap.this, "Đăng nhập tài khoản Giảng viên thành công!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ManHinhDangNhap.this, ManHinhTrangChuGiaoVien.class);
-                startActivity(intent);
+            // Bước 2: Kiểm tra định dạng tên đăng nhập (Mã tài khoản)
+            String regexSinhVien = "^(19|20|21|22|23|24)A1001D\\d{4}$";
+            String regexGiangVien = "^GV\\d+$";
+
+            boolean isSinhVien = username.matches(regexSinhVien);
+            boolean isGiangVien = username.matches(regexGiangVien);
+
+            if (!isSinhVien && !isGiangVien) {
+                etUsername.setError("Tài khoản không đúng định dạng");
+                Toast.makeText(ManHinhDangNhap.this, "Tài khoản không đúng định dạng", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Bước 3: Truy vấn SQLite kiểm tra đăng nhập
+            Cursor cursor = dbHelper.kiemTraDangNhap(username, password);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                int indexVaiTro = cursor.getColumnIndex("vai_tro");
+                int indexMaNguoiDung = cursor.getColumnIndex("ma_nguoi_dung");
+
+                String vaiTro = indexVaiTro != -1 ? cursor.getString(indexVaiTro) : "";
+                String maNguoiDung = indexMaNguoiDung != -1 ? cursor.getString(indexMaNguoiDung) : username;
+
+                Toast.makeText(ManHinhDangNhap.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+
+                if ("GIANG_VIEN".equalsIgnoreCase(vaiTro) || isGiangVien) {
+                    Intent intent = new Intent(ManHinhDangNhap.this, ManHinhTrangChuGiaoVien.class);
+                    intent.putExtra("ma_nguoi_dung", maNguoiDung);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(ManHinhDangNhap.this, ManHinhTrangChuSinhVien.class);
+                    intent.putExtra("ma_nguoi_dung", maNguoiDung);
+                    startActivity(intent);
+                }
+
+                cursor.close();
+                finish();
             } else {
-                Toast.makeText(ManHinhDangNhap.this, "Đăng nhập tài khoản Sinh viên thành công!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ManHinhDangNhap.this, ManHinhTrangChuSinhVien.class);
-                startActivity(intent);
+                if (cursor != null) {
+                    cursor.close();
+                }
+                Toast.makeText(ManHinhDangNhap.this, "Không tìm thấy tài khoản", Toast.LENGTH_SHORT).show();
             }
         });
 
