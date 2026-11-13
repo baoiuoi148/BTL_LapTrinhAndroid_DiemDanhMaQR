@@ -58,8 +58,8 @@ public class ManHinhTrangChuSinhVien extends AppCompatActivity {
     private void hienLichHomNay(DatabaseHelper db, String maSV) {
         LinearLayout danhSach = findViewById(R.id.linearLayoutLichHomNay);
         danhSach.removeAllViews();
-        String ngay = DuLieuDiemDanh.dinhDangGio(System.currentTimeMillis(), "dd/MM/yyyy");
-        try (Cursor lich = db.layLichHocHomNay(maSV, ngay)) {
+        String thuHocDemo = "Thứ 2";
+        try (Cursor lich = db.layLichHocTheoThu(maSV, thuHocDemo)) {
             while (lich.moveToNext()) {
                 View theLop = getLayoutInflater().inflate(R.layout.item_lich_hoc_hom_nay, danhSach, false);
                 ((TextView) theLop.findViewById(R.id.tvTenMonHomNay)).setText(lich.getString(0));
@@ -67,12 +67,12 @@ public class ManHinhTrangChuSinhVien extends AppCompatActivity {
                 java.util.List<String> thongTin = new java.util.ArrayList<>();
                 for (int cot = 2; cot <= 4; cot++) {
                     String giaTri = lich.getString(cot);
-                    if (!TextUtils.isEmpty(giaTri)) {
+                    if (!android.text.TextUtils.isEmpty(giaTri)) {
                         thongTin.add(cot == 4 ? "GV: " + giaTri : giaTri);
                     }
                 }
                 ((TextView) theLop.findViewById(R.id.tvThongTinLopHomNay))
-                        .setText(TextUtils.join(" · ", thongTin));
+                        .setText(android.text.TextUtils.join(" · ", thongTin));
                 danhSach.addView(theLop);
             }
             int soLop = danhSach.getChildCount();

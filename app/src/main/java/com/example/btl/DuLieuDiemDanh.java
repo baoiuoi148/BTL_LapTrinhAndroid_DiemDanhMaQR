@@ -46,7 +46,19 @@ final class DuLieuDiemDanh {
                 buoiHoc.add(new BuoiHoc(c, lop.gioHoc));
             }
         }
-        buoiHoc.sort(Comparator.comparingLong(buoi -> buoi.batDau));
+        buoiHoc.sort(Comparator.comparingInt(buoi -> buoi.soThuTu));
+
+        // Tự động xác định buổi đang học (mặc định là buổi 6, hoặc tự trượt sang buổi tiếp theo nếu đã điểm danh)
+        int buoiDangHoc = 6;
+        for (BuoiHoc b : buoiHoc) {
+            if (b.soThuTu >= buoiDangHoc && b.coMat) {
+                buoiDangHoc = b.soThuTu + 1;
+            }
+        }
+        for (BuoiHoc b : buoiHoc) {
+            b.setBuoiDangHoc(buoiDangHoc);
+        }
+
         return buoiHoc;
     }
 
@@ -99,6 +111,7 @@ final class DuLieuDiemDanh {
         final String gio;
         final boolean coMat;
         final long batDau;
+        private int buoiDangHoc = 6;
 
         BuoiHoc(Cursor c, String gio) {
             soThuTu = c.getInt(c.getColumnIndexOrThrow("so_thu_tu"));
@@ -108,21 +121,28 @@ final class DuLieuDiemDanh {
             batDau = docGioBatDau(ngay, gio);
         }
 
+        void setBuoiDangHoc(int buoi) {
+            this.buoiDangHoc = buoi;
+        }
+
         boolean daChot(long hienTai) {
-            return batDau != Long.MAX_VALUE && hienTai >= batDau + THOI_GIAN_DIEM_DANH_MS;
+            if (coMat) {
+                return true;
+            }
+            return soThuTu < buoiDangHoc;
         }
 
         TrangThai trangThai(long hienTai) {
             if (coMat) {
                 return TrangThai.CO_MAT;
             }
-            if (batDau == Long.MAX_VALUE) {
-                return TrangThai.CHUA_DIEM_DANH;
-            }
-            if (hienTai < batDau) {
+            if (soThuTu > buoiDangHoc) {
                 return TrangThai.CHUA_DEN;
             }
-            return daChot(hienTai) ? TrangThai.VANG : TrangThai.CHUA_DIEM_DANH;
+            if (soThuTu == buoiDangHoc) {
+                return TrangThai.CHUA_DIEM_DANH;
+            }
+            return TrangThai.VANG;
         }
 
         private static long docGioBatDau(String ngay, String gio) {
