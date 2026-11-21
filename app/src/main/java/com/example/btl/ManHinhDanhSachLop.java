@@ -1,11 +1,16 @@
 package com.example.btl;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -24,11 +29,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ManHinhDanhSachLop extends AppCompatActivity implements View.OnClickListener {
     private ImageView mimageViewHienMaQR;
+    private ImageView mimageViewTaiFile;
     private LinearLayout mlinearLayoutTrangChu;
     private TableLayout mtableLayoutDiemDanh;
     private TextView mtextViewTenMon, mtextViewSubTitle;
@@ -93,11 +103,15 @@ public class ManHinhDanhSachLop extends AppCompatActivity implements View.OnClic
 
     private void addAction() {
         mimageViewHienMaQR.setOnClickListener(this);
+        if (mimageViewTaiFile != null) {
+            mimageViewTaiFile.setOnClickListener(this);
+        }
         mlinearLayoutTrangChu.setOnClickListener(this);
     }
 
     private void initView() {
         mimageViewHienMaQR = findViewById(R.id.imageViewHienMaQR);
+        mimageViewTaiFile = findViewById(R.id.imageViewTaiFile);
         mlinearLayoutTrangChu = findViewById(R.id.linearLayoutTrangChu);
         mtableLayoutDiemDanh = findViewById(R.id.tableLayoutDiemDanh);
         mtextViewTenMon = findViewById(R.id.textView5);
@@ -275,11 +289,153 @@ public class ManHinhDanhSachLop extends AppCompatActivity implements View.OnClic
             intent.putExtra(ThanhDieuHuong.EXTRA_MA_NGUOI_DUNG, maGV);
             startActivity(intent);
         }
+        if (v == mimageViewTaiFile) {
+            xuatFileExcel();
+        }
         if (v == mlinearLayoutTrangChu) {
             Intent intent = new Intent(ManHinhDanhSachLop.this, ManHinhTrangChuGiaoVien.class);
             intent.putExtra(ThanhDieuHuong.EXTRA_MA_NGUOI_DUNG, maGV);
             startActivity(intent);
             finish();
         }
+    }
+
+    private void xuatFileExcel() {
+        String fileName = "DanhSachDiemDanh_" + maLop.replaceAll("[^a-zA-Z0-9.-]", "_") + ".csv";
+        String csvContent = taoNoiDungCSV();
+
+        boolean thanhCong = false;
+        String duongDanHienThi = "";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            try {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+                values.put(MediaStore.MediaColumns.MIME_TYPE, "text/csv");
+                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+
+                Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                if (uri != null) {
+                    try (OutputStream os = getContentResolver().openOutputStream(uri)) {
+                        if (os != null) {
+                            os.write(csvContent.getBytes(StandardCharsets.UTF_8));
+                            thanhCong = true;
+                            duongDanHienThi = "Download/" + fileName;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (!thanhCong) {
+            try {
+                File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                if (!downloadDir.exists()) {
+                    downloadDir.mkdirs();
+                }
+                File file = new File(downloadDir, fileName);
+                try (FileOutputStream fos = new FileOutputStream(file)) {
+                    fos.write(csvContent.getBytes(StandardCharsets.UTF_8));
+                    thanhCong = true;
+                    duongDanHienThi = file.getAbsolutePath();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (!thanhCong) {
+            try {
+                File appDownloadDir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+                File file = new File(appDownloadDir, fileName);
+                try (FileOutputStream fos = new FileOutputStream(file)) {
+                    fos.write(csvContent.getBytes(StandardCharsets.UTF_8));
+                    thanhCong = true;
+                    duongDanHienThi = file.getAbsolutePath();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (thanhCong) {
+            Toast.makeText(this, "Đã xuất file Excel thành công!", Toast.LENGTH_SHORT).show();
+            new AlertDialog.Builder(this)
+                    .setTitle("Xuất file Excel thành công")
+                    .setMessage("Đã xuất danh sách lớp ra file Excel (CSV) tại:\n" + duongDanHienThi +
+                            "\n\nFile hỗ trợ mở trực tiếp bằng Microsoft Excel với đầy đủ dấu tiếng Việt.")
+                    .setPositiveButton("Đồng ý", null)
+                    .show();
+        } else {
+            Toast.makeText(this, "Xuất file thất bại!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String taoNoiDungCSV() {
+        StringBuilder sb = new StringBuilder();
+        // Byte Order Mark (BOM) UTF-8 để Microsoft Excel nhận diện đúng tiếng Việt có dấu
+        sb.append("\uFEFF");
+
+        sb.append("DANH SÁCH ĐIỂM DANH SINH VIÊN\n");
+        sb.append("Mã lớp:,\"").append(maLop).append("\"\n");
+        String tenMon = (mtextViewTenMon != null && mtextViewTenMon.getText() != null)
+                ? mtextViewTenMon.getText().toString() : "Lập trình cho thiết bị di động";
+        sb.append("Môn học:,\"").append(tenMon).append("\"\n");
+        sb.append("Giảng viên:,\"").append(maGV).append("\"\n\n");
+
+        List<BuoiHocItem> dsBuoi = new ArrayList<>();
+        List<SinhVienItem> dsSV = new ArrayList<>();
+
+        try (DatabaseHelper db = new DatabaseHelper(this)) {
+            try (Cursor c = db.layDanhSachBuoiHocCuaLop(maLop)) {
+                while (c.moveToNext()) {
+                    dsBuoi.add(new BuoiHocItem(c.getLong(0), c.getInt(1), c.getString(2)));
+                }
+            }
+            try (Cursor c = db.layDanhSachSinhVienCuaLop(maLop)) {
+                while (c.moveToNext()) {
+                    String ma = c.getString(0);
+                    String ten = c.getString(1);
+                    String ngaySinh = layNgaySinh(ma);
+                    dsSV.add(new SinhVienItem(ma, ten, ngaySinh));
+                }
+            }
+
+            sb.append("STT,Mã sinh viên,Họ và tên,Ngày sinh");
+            for (BuoiHocItem buoi : dsBuoi) {
+                sb.append(",Buổi ").append(buoi.soThuTu).append(" (").append(buoi.ngayHoc).append(")");
+            }
+            sb.append(",Tổng có mặt,Tổng vắng\n");
+
+            int stt = 1;
+            for (SinhVienItem sv : dsSV) {
+                sb.append(stt++).append(",");
+                sb.append("\"").append(sv.maSV).append("\",");
+                sb.append("\"").append(sv.hoTen).append("\",");
+                sb.append("\"").append(sv.ngaySinh).append("\"");
+
+                int tongCoMat = 0;
+                int tongVang = 0;
+
+                for (BuoiHocItem buoi : dsBuoi) {
+                    boolean daCoMat = db.kiemTraDiemDanhBuoi(sv.maSV, buoi.id) == 1;
+                    if (daCoMat) {
+                        sb.append(",Có mặt");
+                        tongCoMat++;
+                    } else {
+                        sb.append(",Vắng");
+                        tongVang++;
+                    }
+                }
+
+                sb.append(",").append(tongCoMat).append(",").append(tongVang).append("\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
     }
 }

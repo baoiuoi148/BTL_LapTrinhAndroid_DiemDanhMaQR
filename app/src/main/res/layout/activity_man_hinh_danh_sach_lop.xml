@@ -245,10 +245,12 @@
                     app:srcCompat="@drawable/icon_qr" />
 
                 <ImageView
-                    android:id="@+id/imageView2"
+                    android:id="@+id/imageViewTaiFile"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:contentDescription="Tải file"
                     app:srcCompat="@drawable/icon_tai_file" />
             </LinearLayout>

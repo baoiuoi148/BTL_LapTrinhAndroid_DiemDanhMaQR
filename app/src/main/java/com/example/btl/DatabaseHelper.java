@@ -142,7 +142,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Tự động làm mới cơ sở dữ liệu khi hạ phiên bản, tránh lỗi crash văng app
         onUpgrade(db, oldVersion, newVersion);
     }
 
